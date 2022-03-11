@@ -13,6 +13,9 @@ public class UserService {
     private final UserRepository userRepository;
 
     public void registerUser(UserDto userDto) {
+
+        //id, 이메일 중복 체크 필요
+
         userRepository.save(User
                 .builder()
                 .username(userDto.getUsername())

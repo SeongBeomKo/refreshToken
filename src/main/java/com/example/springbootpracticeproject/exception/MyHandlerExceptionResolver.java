@@ -32,30 +32,40 @@ public class MyHandlerExceptionResolver implements HandlerExceptionResolver {
     private static ObjectMapper objectMapper = new ObjectMapper();
 
     @Override
-    public ModelAndView resolveException(HttpServletRequest request, HttpServletResponse response, Object handler, Exception ex) {
+    public ModelAndView resolveException(HttpServletRequest request,
+                                         HttpServletResponse response,
+                                         Object handler, Exception ex) {
 
         log.info("call resolver", ex);
         String acceptHeader = request.getHeader("accept");
         try {
+
+            Map<String, Object> resultError = new HashMap<>();
+            resultError.put("ex", ex.getClass());
+            resultError.put("message", ex.getMessage());
+            String result = objectMapper.writeValueAsString(resultError);
+            response.setContentType("application/json");
+            response.setCharacterEncoding("utf-8");
+            response.getWriter().write(result);
+
             if (ex instanceof IllegalArgumentException) {
                 log.info("MyHanderExceptionResolver resolved 400 bad request");
 
-                if(acceptHeader.equals("application/json")) {
-                    Map<String, Object> resultError = new HashMap<>();
-                    resultError.put("ex", ex.getClass());
-                    resultError.put("message", ex.getMessage());
-                    String result = objectMapper.writeValueAsString(resultError);
+               // if(acceptHeader.equals("application/json")) {
                     response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-                    response.setContentType("application/json");
-                    response.setCharacterEncoding("utf-8");
-                    response.getWriter().write(result);
+
                     //String requestURI = request.getRequestURI();
                     return new ModelAndView();
-                } else {
+              //  } else {
                     //html/text
                     // html 페이지 안만듬
-                    return new ModelAndView("error/400");
-                }
+                   // return new ModelAndView("error/400");
+             //   }
+            }
+            if(ex instanceof NullPointerException) {
+                log.info("MyHanderExceptionResolver resolved 404 Not Found");
+                response.setStatus(HttpServletResponse.SC_NOT_FOUND);
+                return new ModelAndView();
             }
         } catch (IOException e) {
             log.error("other error", e);
