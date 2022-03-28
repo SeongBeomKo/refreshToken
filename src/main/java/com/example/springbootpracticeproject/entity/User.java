@@ -6,6 +6,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -28,4 +29,9 @@ public class User {
     //user가 삭제 되면 관련 post가 전부 삭제된다
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
     List<Post> postList;
+
+    // Roles
+    @ElementCollection(fetch = FetchType.EAGER)
+    @Builder.Default
+    private List<String> roles = new ArrayList<>();
 }

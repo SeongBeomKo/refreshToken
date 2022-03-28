@@ -1,5 +1,6 @@
 package com.example.springbootpracticeproject.dto;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -14,6 +15,7 @@ import javax.validation.constraints.Size;
 @Getter
 @AllArgsConstructor
 @NoArgsConstructor
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public class UserDto {
 
     @NotBlank(message = "ID는 공백일 수 없습니다.") // null, "", "  "  모두 허용하지않는다
